@@ -2,29 +2,25 @@ package easy.e447
 
 object Solution {
   def numberOfBoomerangs(points: Array[Array[Int]]): Int = {
-    val max = points.length
     var count = 0
+    for (j <- points.indices) {
+      val distances = collection.mutable.Map.empty[Int, Int]
+      for (k <- points.indices) {
+        if (j != k) {
+          val jPoint = points(j)
+          val kPoint = points(k)
 
-    for (j <- 0 until max - 1) {
-      for (k <- j + 1 until max) {
-        val jPoint = points(j)
-        val kPoint = points(k)
+          val x = jPoint.head - kPoint.head
+          val y = jPoint.last - kPoint.last
+          val distance = x * x + y * y
 
-        val halfX = (jPoint.head - kPoint.head).abs / 2.0
-        val halfY = (jPoint.last - kPoint.last).abs / 2.0
-
-        val halfPX =
-          if (jPoint.head < kPoint.head) jPoint.head + halfX
-          else jPoint.head - halfX
-        val halfPY =
-          if (jPoint.last < kPoint.last) jPoint.last + halfY
-          else jPoint.last - halfY
-
-        val halfPoint = Array(halfPX, halfPY)
-
-        points.find(p => p sameElements halfPoint) match {
-          case Some(_) => count += 2
-          case None    => ()
+          if (distances contains distance) {
+            val d = distances(distance)
+            count += d * 2
+            distances(distance) += 1
+          } else {
+            distances += distance -> 1
+          }
         }
       }
     }
